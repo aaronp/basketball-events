@@ -19,3 +19,10 @@ jobs:
         java-version: 1.8
     - name: Run tests
       run: sbt clean coverage test coverageReport
+    - name: Upload Coverage
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage
+        path: |
+          target/scala-2.13/scoverage-report/*.html
+          target/scala-2.13/scoverage-report/**/*.html

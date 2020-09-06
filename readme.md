@@ -1,5 +1,8 @@
 # About
-See the [Programming Test pdf](Programming Test.pdf) for the specification
+
+Some data structures for parsing game events (DataEvent) and exposing game state via GameApi.
+
+![Scala CI](https://github.com/aaronp/basketball-events/workflows/Scala%20CI/badge.svg)
 
 # API
 
@@ -42,7 +45,10 @@ to trust as the source of truth -- should we just take what upstream sends us, e
 
 # Building 
 
-This project is build with sbt, though a ```test.sh``` is provided at the root of the project for convenience.
+This project is build with sbt, though a ```test.sh``` is provided at the root of the project for convenience
+in addition to the Github Actions build. 
+
+Code test coverage can be found [here](https://github.com/aaronp/basketball-events/suites/1150590372/artifacts/16581452).
 
 # Summary
 
