@@ -1,5 +1,7 @@
 package gamestream.model
 
+import gamestream.GameApi
+
 /**
  * The incoming parsed game event
  */
@@ -59,3 +61,7 @@ case object TeamOne extends Team(0)
 
 case object TeamTwo extends Team(1)
 
+
+case class EventError(invalidEvent: DataEvent, eventIndex: Int, previousValidState: GameApi, detail: String) extends Exception {
+  override def getMessage = s"Event $eventIndex $invalidEvent cause: $detail"
+}
