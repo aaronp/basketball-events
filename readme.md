@@ -36,7 +36,7 @@ Supporting data structures of which DataEvent is comprised are defined in gamest
 As there are a lot of ints about, the DateEvent uses strongly-typed wrappers for scores, elapsed time, etc.
 This hopefully gives some readability and type safety at not much cost.
 
-Other approaches might include phantom types, (tagged types)[http://eed3si9n.com/learning-scalaz/Tagged+type.html], or just leaving them as primitives, but for now the simplest thing which works is a basic wrapper type.
+Other approaches might include phantom types, [tagged types](http://eed3si9n.com/learning-scalaz/Tagged+type.html), or just leaving them as primitives, but for now the simplest thing which works is a basic wrapper type.
   
 ## Validation/Deduplication
 
@@ -52,7 +52,7 @@ The logic/data structures here are a nice zero-dependency representation of the 
 The GameState as an immutable data structure with its single 'update(input : DataEvent)' method lends itself to being used within other libraries/frameworks.
 For example, it can be easily adapted to the [state monad](https://typelevel.org/cats/datatypes/state.html), which then could be used by e.g. a [Ref.tryModifyState](https://typelevel.org/cats-effect/api/cats/effect/concurrent/Ref.html#tryModifyState[B](state:cats.data.State[A,B]):F[Option[B]]) call.
 
-Essentially in the streaming case (e.g. "update some state as each event arrives"), these data structures should be well-suited to be dropped into libraries that can feed DataEvents to them, such as [scan](https://monix.io/api/current/monix/reactive/Observable.html#scan[S](seed:=%3ES)(op:(S,A)=%3ES):monix.reactive.Observable[S]).
+Essentially in the streaming case (e.g. "update some state as each event arrives"), these data structures should be well-suited to be dropped into libraries that can feed DataEvents to them, such as e.g. [Observable.scan](https://monix.io/api/current/monix/reactive/Observable.html#scan[S](seed:=%3ES)(op:(S,A)=%3ES):monix.reactive.Observable[S]).
 
 # Building 
 
