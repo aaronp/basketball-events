@@ -4,17 +4,9 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 object DataEventCodecTest {
-
-  implicit class RichInt(val i: Int) extends AnyVal {
-    def asPaddedBinary: String = {
-      i.toBinaryString.reverse.padTo(Int.MaxValue.toBinaryString.size, '0').reverse
-    }
-  }
-
-  implicit class JsonHelper(val sc: StringContext) extends AnyVal {
+  implicit class BinaryPrefix(val sc: StringContext) extends AnyVal {
     def bin(args: Any*): Int = Integer.parseInt(sc.s(args: _*), 2)
   }
-
 }
 
 class DataEventCodecTest extends AnyWordSpec with Matchers {
@@ -52,11 +44,18 @@ class DataEventCodecTest extends AnyWordSpec with Matchers {
       DataEventCodec.flags.teamTwoTotalPoints(bin"0000000000000000000000000011000").points shouldBe 3
     }
   }
-  "DataEventCodec" should {
-    "parse 0x781002 = 7868418 = 0 000000001111 00000010 00000000 0 10" in {
-      val input = 0x781002
-      val event = DataEventCodec.fromBinary(input)
-      println(event)
+  "DataEventCodec.fromMessage" should {
+    List(
+      0x781002 -> DataEvent(PointScored(2), TeamOne, team1Score = TotalScore(2), team2Score = TotalScore(0), ElapsedMatchTime(15)),
+      0xf0101f -> DataEvent(PointScored(3), TeamTwo, team1Score = TotalScore(2), team2Score = TotalScore(3), ElapsedMatchTime(30)),
+      0x1310c8a1 -> DataEvent(PointScored(1), TeamOne, team1Score = TotalScore(25), team2Score = TotalScore(20), ElapsedMatchTime.fromMinutesSeconds(10, 10)),
+      0x29f981a2 -> DataEvent(PointScored(2), TeamOne, team1Score = TotalScore(48), team2Score = TotalScore(52), ElapsedMatchTime.fromMinutesSeconds(22, 23)),
+      0x48332327 -> DataEvent(PointScored(3), TeamTwo, team1Score = TotalScore(100), team2Score = TotalScore(100), ElapsedMatchTime.fromMinutesSeconds(38, 30))
+    ).foreach {
+      case (msg, expected) =>
+        s"parse ${msg.toHexString} as ${expected}" in {
+          DataEventCodec.fromMessage(msg) shouldBe expected
+        }
     }
   }
 }

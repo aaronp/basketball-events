@@ -1,19 +1,19 @@
 package gamestream.model
 
 /**
- * Code for converting between input types and DataEvents
+ * Provides functions for converting between input types (e.g. binary int representation) and DataEvents
  */
-object DataEventCodec {
+private[model] object DataEventCodec {
 
   /**
    * @param binaryEncodedEventMessage the event message
    * @return a DataEvent from the given binary encoding
    */
-  def fromBinary(binaryEncodedEventMessage: Int) = flags.event(binaryEncodedEventMessage)
+  def fromMessage(binaryEncodedEventMessage: Int): DataEvent = flags.event(binaryEncodedEventMessage)
 
-  private[model] type BitMask[A] = Int => A
+  type BitMask[A] = Int => A
 
-  private[model] object BitMask {
+  object BitMask {
     def apply[A](bitmask: String)(parse: Int => A): BitMask[A] = {
       assert(bitmask.size == 31, s"coding/compile-time bug: invalid bitmask size ${bitmask.size}")
       val mask = Integer.parseInt(bitmask, 2)
@@ -26,14 +26,17 @@ object DataEventCodec {
     }
   }
 
-  private[model] object flags {
+  object flags {
+    // there are a lot of ways to do this, but hopefully this makes it more readable/apparent? perhaps not...
+    //                                                                 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     // @formatter:off
-    val pointsScored: BitMask[PointScored]                 = BitMask("0000000000000000000000000000011")(PointScored.apply)
-    val whoScored: BitMask[Team]                           = BitMask("0000000000000000000000000000100")(Team.apply)
-    val teamTwoTotalPoints: BitMask[TotalScore]            = BitMask("0000000000000000000011111111000")(TotalScore.apply)
-    val teamOneTotalPoints: BitMask[TotalScore]            = BitMask("0000000000001111111100000000000")(TotalScore.apply)
-    val elapsedMatchTimeSeconds: BitMask[ElapsedMatchTime] = BitMask("1111111111110000000000000000000")(ElapsedMatchTime.apply)
+    val pointsScored            :      BitMask[PointScored] = BitMask("0000000000000000000000000000011")(PointScored.apply)
+    val whoScored               :             BitMask[Team] = BitMask("0000000000000000000000000000100")(Team.apply)
+    val teamTwoTotalPoints      :       BitMask[TotalScore] = BitMask("0000000000000000000011111111000")(TotalScore.apply)
+    val teamOneTotalPoints      :       BitMask[TotalScore] = BitMask("0000000000001111111100000000000")(TotalScore.apply)
+    val elapsedMatchTimeSeconds : BitMask[ElapsedMatchTime] = BitMask("1111111111110000000000000000000")(ElapsedMatchTime.apply)
     // @formatter:on
+
     // the whole event
     val event: BitMask[DataEvent] = (event: Int) => {
       DataEvent(
@@ -45,5 +48,4 @@ object DataEventCodec {
       )
     }
   }
-
 }
